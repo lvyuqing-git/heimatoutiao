@@ -7,7 +7,7 @@
 
 <script>
 export default {
-  props: ['rule'],
+  props: ['rule', 'msg'],
   data () {
     return {
       state: true
@@ -29,7 +29,11 @@ export default {
     blurfn (event) {
       let value = event.target.value
       if (this.rule && !this.rule.test(value)) {
-        this.$emit('blur')
+        // this.$emit('blur')
+        this.$toast.fail({
+          message: this.msg,
+          duration: 1000
+        })
 
       }
 

@@ -7,10 +7,11 @@
         <hminput v-model="user.username"
                  placeholder="请输入用户名/手机号"
                  :rule='/^(\d{5,6})$|^(1\d{10})$/'
-                 @blur="blurfn"></hminput>
+                 msg='输入不正确'></hminput>
         <hminput v-model="user.password"
                  placeholder="请输入密码"
-                 :rule='/^\d{5,6}$/'></hminput>
+                 :rule='/^\d{5,6}$/'
+                 msg='输入不正确'></hminput>
       </div>
       <p class="tips">
         没有账号？
@@ -39,14 +40,9 @@ export default {
   methods: {
     login () {
       console.log('点击');
-
     },
     inputfn (data) {
       this.user.username = data
-    },
-    blurfn () {
-      console.log('输入有误');
-
     }
   }
 }
