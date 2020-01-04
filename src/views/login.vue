@@ -3,26 +3,55 @@
     <div class="container">
       <div class="close"><span class="iconfont iconicon-test"></span></div>
       <div class="logo"><span class="iconfont iconnew"></span></div>
-      <div class="inputs"><input data-v-744880be=""
-               placeholder="请输入手机号"
-               class="input"><input data-v-744880be=""
-               placeholder="密码"
-               class="input"
-               type="password"></div>
+      <div class="inputs">
+        <hminput v-model="user.username"
+                 placeholder="请输入用户名/手机号"
+                 :rule='/^(\d{5,6})$|^(1\d{10})$/'
+                 @blur="blurfn"></hminput>
+        <hminput v-model="user.password"
+                 placeholder="请输入密码"
+                 :rule='/^\d{5,6}$/'></hminput>
+      </div>
       <p class="tips">
         没有账号？
         <a href="#/register"
            class="">去注册</a></p>
-      <div data-v-4bc01e24=""
-           class="button">登录按钮</div>
+      <hmbtn @click="login">登录</hmbtn>
     </div>
   </div>
 </template>
 
 <script>
+import hmbtn from '@/components/hmbtn.vue'
+import hminput from '@/components/hminput.vue'
 export default {
+  components: {
+    hmbtn, hminput
+  },
+  data () {
+    return {
+      user: {
+        username: '',
+        password: ''
+      }
+    }
+  },
+  methods: {
+    login () {
+      console.log('点击');
 
+    },
+    inputfn (data) {
+      this.user.username = data
+    },
+    blurfn () {
+      console.log('输入有误');
+
+    }
+  }
 }
+
+
 </script>
 
 <style lang='less'>
