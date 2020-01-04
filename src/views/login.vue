@@ -42,11 +42,17 @@ export default {
     async login () {
       if (/^\d{5,6}$||1\d{10}/.test(this.user.username) && /\d{3}/.test(this.user.password)) {
         let res = await login(this.user)
-        localStorage.setItem('user_token', res.data.data.token)
-        localStorage.setItem('user', res.data.data.user)
         if (res.data.message == "登录成功") {
+          localStorage.setItem('user_token', res.data.data.token)
+          localStorage.setItem('user', res.data.data.user)
           this.$router.push({ name: 'Personal' })
+        } else {
+          this.$toast.fail('账号或密码错误')
+
         }
+      } else {
+        this.$toast.fail('请输入正确的账号密码')
+
       }
     },
     inputfn (data) {
