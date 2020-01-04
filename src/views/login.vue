@@ -25,6 +25,7 @@
 <script>
 import hmbtn from '@/components/hmbtn.vue'
 import hminput from '@/components/hminput.vue'
+import { login } from '@/apis/userapis.js'
 export default {
   components: {
     hmbtn, hminput
@@ -38,9 +39,11 @@ export default {
     }
   },
   methods: {
-    login () {
+    async login () {
       if (/^\d{5,6}$||1\d{10}/.test(this.user.username) && /\d{3}/) {
-        console.log('点击');
+        let res = await login(this.user)
+        console.log(res);
+
 
       }
     },
