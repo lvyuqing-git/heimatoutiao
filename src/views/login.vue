@@ -10,7 +10,7 @@
                  msg='输入不正确'></hminput>
         <hminput v-model="user.password"
                  placeholder="请输入密码"
-                 :rule='/^\d{5,6}$/'
+                 :rule='/^\d{3}$/'
                  msg='输入不正确'></hminput>
       </div>
       <p class="tips">
@@ -39,7 +39,10 @@ export default {
   },
   methods: {
     login () {
-      console.log('点击');
+      if (/^\d{5,6}$||1\d{10}/.test(this.user.username) && /\d{3}/) {
+        console.log('点击');
+
+      }
     },
     inputfn (data) {
       this.user.username = data
