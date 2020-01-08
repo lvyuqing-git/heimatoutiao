@@ -2,32 +2,37 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Login from '@/views/login.vue'
 import Personal from '@/views/personal.vue'
+import Edit_profile from '@/views/Edit_profile.vue'
 Vue.use(VueRouter)
 let router = new VueRouter({
-  routes: [
-    {
-      name: 'Login',
-      path: '/login',
-      component: Login
-    },
-    {
-      name: 'Personal',
-      path: '/personal',
-      component: Personal
-    }
-  ]
+	routes: [
+		{
+			name: 'Login',
+			path: '/login',
+			component: Login
+		},
+		{
+			name: 'Personal',
+			path: '/personal',
+			component: Personal
+		},
+		{
+			name: 'Edit_profile',
+			path: '/edit_profile',
+			component: Edit_profile
+		}
+	]
 })
 router.beforeEach((to, from, next) => {
-  if (to.path.indexOf('/personal') === 0) {
-    let token = localStorage.getItem('user_token')
-    if (token) {
-      next()
-    } else {
-      next({ path: '/login' })
-    }
-  } else {
-    next()
-
-  }
+	if (to.path.indexOf('/personal') === 0) {
+		let token = localStorage.getItem('user_token')
+		if (token) {
+			next()
+		} else {
+			next({ path: '/login' })
+		}
+	} else {
+		next()
+	}
 })
 export default router
