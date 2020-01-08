@@ -44,7 +44,7 @@ export default {
         let res = await login(this.user)
         if (res.data.message == "登录成功") {
           localStorage.setItem('user_token', res.data.data.token)
-          localStorage.setItem('user', res.data.data.user)
+          localStorage.setItem('user', JSON.stringify(res.data.data.user))
           this.$router.push({ name: 'Personal' })
         } else {
           this.$toast.fail('账号或密码错误')

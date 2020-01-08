@@ -2,7 +2,7 @@
   <div id="app">
     <div class="editprofile">
       <div class="header">
-        <span class="iconfont iconjiantou2"></span>
+        <span class="iconfont iconjiantou2" @click="$router.back()"></span>
         <h4>编辑用户资料</h4>
         <span></span>
       </div>
@@ -16,7 +16,7 @@
             昵称
         </div>
         <div slot="right">
-            火星网友
+            {{user.nickname}}
         </div>
     </hmcell>
        <hmcell>
@@ -24,7 +24,7 @@
             密码
         </div>
         <div slot="right">
-            火星网友
+            *****
         </div>
     </hmcell>
        <hmcell>
@@ -32,7 +32,7 @@
             性别
         </div>
         <div slot="right">
-            火星网友
+           {{user.gender}}
         </div>
     </hmcell>
 
@@ -42,16 +42,28 @@
 
 <script>
 import hmcell from '../components/hecall'
+import {user_info} from '../apis/userapis'
 export default {
     components: {
         hmcell
+    },
+    data () {
+        return {
+            user : {}
+        }
+    },
+   async mounted () {
+      let res = await user_info(JSON.parse(localStorage.getItem('user')).id)
+      console.log(res);
+      this.user = res.data.data
     }
 }
 </script>
 
 <style lang="less" scoped>
 .editprofile {
-  margin: 0 15px;
+    
+  margin: 15px 15px;
   .header {
     display: flex;
     justify-content: space-between;
