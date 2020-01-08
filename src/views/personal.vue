@@ -9,9 +9,9 @@
 				/>
 				<div class="profile-center">
 					<div class="name">
-						<span class="iconfont iconxingbienan"></span>我就是我
+						<span class="iconfont iconxingbienan"></span>{{user.nickname}}
 					</div>
-					<div class="time">2019-9-24</div>
+					<div class="time">{{user.create_date}}</div>
 				</div>
 				<span class="iconfont iconjiantou1"></span>
 			</div>
@@ -26,21 +26,21 @@
         </hecell>
          <hecell>
             <div slot="left">
-                我的关注
+                我的跟帖
             </div>
            <div slot="right">
-                关注的用户
+                跟帖/回复
             </div>
         </hecell> <hecell>
             <div slot="left">
-                我的关注
+                我的收藏
             </div>
            <div slot="right">
-                关注的用户
+                文章/视频
             </div>
         </hecell> <hecell>
             <div slot="left">
-                我的关注
+                设置
             </div>
         </hecell>
 	</div>
@@ -48,9 +48,22 @@
 
 <script>
 import hecell from '@/components/hecall'
+import {user_info} from '@/apis/userapis'
 export default {
+    data () {
+        return {
+            user : {}
+        }
+    },
     components: {
         hecell
+    },
+    async mounted () {
+        let res = await user_info(JSON.parse(localStorage.getItem('user')).id)
+     
+        this.user = res.data.data
+           console.log(this.user);
+        
     }
 }
 </script>
