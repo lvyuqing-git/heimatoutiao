@@ -26,14 +26,18 @@
 			</hmcell>
 			<van-dialog
 				v-model="dialogNickname"
-				title="标题"
+				title="修改用户名"
 				show-cancel-button
+				@confirm="rename"
 			>
-				<van-cell-group>
-					<van-field v-model="value" placeholder="请输入用户名" />
-				</van-cell-group>
+				<van-field
+					v-bind:value="user.username"
+					placeholder="请输入用户名"
+					ref="rename"
+				/>
 			</van-dialog>
-			<hmcell>
+
+			<hmcell @click="passwordShow = !passwordShow">
 				<div slot="left">
 					密码
 				</div>
@@ -41,21 +45,43 @@
 					*****
 				</div>
 			</hmcell>
-			<hmcell>
+			<van-dialog
+				v-model="passwordShow"
+				title="修改密码"
+				show-cancel-button
+				@confirm="rePassword"
+				:before-close="beforeClose"
+			>
+				<van-field placeholder="请原来的输入密码" ref="oldPassword" />
+				<van-field placeholder="请输入信的密码" ref="newPassword" />
+			</van-dialog>
+			<hmcell @click="genderShow = !genderShow">
 				<div slot="left">
 					性别
 				</div>
 				<div slot="right">
-					{{ user.gender }}
+					{{ user.gender ? '男' : '女' }}
 				</div>
 			</hmcell>
+			<van-dialog
+				v-model="genderShow"
+				title="修改性别"
+				show-cancel-button
+				@confirm="reGender"
+			>
+				<van-picker
+					:columns="['女', '男']"
+					@change="onChange"
+					:defaultIndex="user.gender"
+				/>
+			</van-dialog>
 		</div>
 	</div>
 </template>
 
 <script>
 import hmcell from '../components/hecall'
-import { user_info } from '../apis/userapis'
+import { user_info, user_update } from '../apis/userapis'
 export default {
 	components: {
 		hmcell
@@ -63,15 +89,67 @@ export default {
 	data() {
 		return {
 			user: {},
-			dialogNickname: false
+			dialogNickname: false,
+			passwordShow: false,
+			genderShow: false,
+			genderIndex: ''
 		}
 	},
 	async mounted() {
 		let res = await user_info(JSON.parse(localStorage.getItem('user')).id)
-		console.log(res)
 		this.user = res.data.data
 	},
-	methods: {}
+	methods: {
+		async rename() {
+			let value = this.$refs.rename.$refs.input.value
+			let res = await user_update(this.user.id, {
+				nickname: value
+			})
+			this.user.nickname = res.data.data.username
+		},
+		async rePassword() {
+			let oldPassword = this.$refs.oldPassword.$refs.input.value
+			let newPassword = this.$refs.newPassword.$refs.input.value
+
+			if (oldPassword === this.user.password) {
+				if (/\d{3}/.test(newPassword)) {
+					let res = await user_update(this.user.id, {
+						password: newPassword
+					})
+					this.$toast.success(res.data.message)
+				} else {
+					this.$toast.fail('请输入3到6位的数字')
+				}
+			} else {
+				this.$toast.fail('请输入正确的旧密码')
+			}
+		},
+		beforeClose(action, done) {
+			let oldPassword = this.$refs.oldPassword.$refs.input.value
+			let newPassword = this.$refs.newPassword.$refs.input.value
+
+			if (action == 'confirm') {
+				if (oldPassword !== this.user.password) {
+					done(false)
+				} else if (!/\d{3}/.test(newPassword)) {
+					done(false)
+				} else {
+					done()
+				}
+			} else {
+				done()
+			}
+		},
+		onChange(picker, values) {
+			this.genderIndex = picker.columns.indexOf(values)
+		},
+		async reGender() {
+			let res = await user_update(this.user.id, {
+				gender: this.genderIndex
+			})
+			this.user.gender = res.data.data.gender
+		}
+	}
 }
 </script>
 
