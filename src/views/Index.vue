@@ -23,13 +23,8 @@
 					v-for="item in columnList"
 					:key="item.id"
 				>
-                
-                
-                
+                <hminformation v-for="value in item.presentList" :key="value.id" :post='value'></hminformation>
 
-
-                
-                
                 </van-tab>
 			</van-tabs>
 		</div>
@@ -38,12 +33,16 @@
 
 <script>
 import { category, getAllArticle } from '../apis/article'
+import hminformation from '../components/hminformation'
 export default {
 	data() {
 		return {
 			columnList: []
 		}
-	},
+    },
+    components: {
+      hminformation  
+    },
 	async mounted() {
 		let res = await category()
 		this.columnList = res.data.data.map(value => {
