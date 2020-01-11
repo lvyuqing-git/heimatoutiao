@@ -15,12 +15,12 @@ export const user_info = (data) => {
     })
   }
 
-  //编辑用户信息
-export const user_update = (data) => {
-    console.log(data);
+//   //编辑用户信息
+// export const user_update = (data) => {
+//     console.log(data);
     
-    return axios({
-      url: `/user_update/${data}`,
+//     return axios({
+//       url: `/user_update/${data}`,
           
-    })
-  }
+//     })
+//   }
