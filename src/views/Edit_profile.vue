@@ -10,10 +10,10 @@
 				<span></span>
 			</div>
 			<div class="head">
-				<img
-					alt=""
-					src="http://127.0.0.1:3000/uploads/image/default.jpeg"
-				/>
+				<label for="img">
+                    <img alt="" :src="user.head_img" />
+                </label>
+				<van-uploader :after-read="afterRead" id="img"/>
 			</div>
 
 			<hmcell @click="dialogNickname = !dialogNickname">
@@ -82,6 +82,7 @@
 <script>
 import hmcell from '../components/hecall'
 import { user_info, user_update } from '../apis/userapis'
+import { uploadFile } from '../apis/uploadFile'
 export default {
 	components: {
 		hmcell
@@ -148,6 +149,17 @@ export default {
 				gender: this.genderIndex
 			})
 			this.user.gender = res.data.data.gender
+		},
+		async afterRead(file) {
+			let upload = new FormData()
+			upload.append('file', file.file)
+			let res = await uploadFile(upload)
+			if (res.data.message == '文件上传成功') {
+				let res2 = await user_update(this.user.id, {
+					head_img: 'http://127.0.0.1:3000' + res.data.data.url
+				})
+				this.user.head_img = res2.data.data.head_img
+			}
 		}
 	}
 }
@@ -177,6 +189,9 @@ export default {
 			top: 50%;
 			transform: translate(-50%, -50%);
 		}
-	}
+    }
+    /deep/.van-uploader{
+        opacity: 0;
+    }
 }
 </style>
