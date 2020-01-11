@@ -2,7 +2,8 @@
   <input type="text"
          @input="inputfn"
          @blur="blurfn"
-         :class="{success:state,err:!state}">
+         :class="{success:state,err:!state}"
+        >
 </template>
 
 <script>

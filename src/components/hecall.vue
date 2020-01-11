@@ -1,5 +1,5 @@
 <template>
-	<div class="cell">
+	<div class="cell"  @click="clickfn">
 		<div class="left">
 			<slot name="left"></slot>
 		</div>
@@ -13,7 +13,13 @@
 </template>
 
 <script>
-export default {}
+export default {
+    methods: {
+    clickfn(event){
+        this.$emit('click',event)
+    }
+    }
+}
 </script>
 
 <style lang="less" scoped>
