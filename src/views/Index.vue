@@ -17,16 +17,27 @@
 			</div>
 		</div>
 		<div class="nav">
-			<van-tabs sticky swipeable>
-				<van-tab :title="item.name" v-for="item in columnList" :key="item.id"></van-tab>
-			
+			<van-tabs sticky swipeable @change="changeColumn">
+				<van-tab
+					:title="item.name"
+					v-for="item in columnList"
+					:key="item.id"
+				>
+                
+                
+                
+
+
+                
+                
+                </van-tab>
 			</van-tabs>
 		</div>
 	</div>
 </template>
 
 <script>
-import { category } from '../apis/article'
+import { category, getAllArticle } from '../apis/article'
 export default {
 	data() {
 		return {
@@ -39,10 +50,22 @@ export default {
 			return {
 				...value,
 				pageIndex: 1,
-				pageSize: 5
+				pageSize: 5,
+				presentList: []
 			}
 		})
-		console.log(this.column)
+		console.log(this.columnList)
+	},
+	methods: {
+		async changeColumn(active) {
+			let res = await getAllArticle({
+				pageIndex: this.columnList[active].pageIndex,
+				pageSize: this.columnList[active].pageSize,
+				category: this.columnList[active].id
+			})
+			this.columnList[active].presentList = res.data.data
+			console.log(this.columnList[active].presentList)
+		}
 	}
 }
 </script>
