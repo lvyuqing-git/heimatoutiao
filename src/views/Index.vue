@@ -20,16 +20,23 @@
 					v-for="item in columnList"
 					:key="item.id"
 				>
-					<hminformation
-						v-for="value in item.presentList"
-						:key="value.id"
-						:post="value"
-						@click="
-							$router.push({
-								path: `/articleDetails/${value.id}`
-							})
-						"
-					></hminformation>
+					<van-list
+						v-model="loading"
+						:finished="finished"
+						finished-text="没有更多了"
+						@load="onLoad"
+					>
+						<hminformation
+							v-for="value in item.presentList"
+							:key="value.id"
+							:post="value"
+							@click="
+								$router.push({
+									path: `/articleDetails/${value.id}`
+								})
+							"
+						></hminformation>
+					</van-list>
 				</van-tab>
 			</van-tabs>
 		</div>
@@ -44,7 +51,9 @@ export default {
 	data() {
 		return {
 			columnList: [],
-			active: localStorage.getItem('user_token') ? 1 : 0
+			active: localStorage.getItem('user_token') ? 1 : 0,
+			loading: false,
+			finished: false
 		}
 	},
 	components: {
@@ -72,14 +81,25 @@ export default {
 			for (let i = 0; i < res.data.data.length; i++) {
 				for (let j = 0; j < res.data.data[i].cover.length; j++) {
 					if (res.data.data[i].cover[j].url.indexOf('http') == -1) {
-						res.data.data[i].cover[j].url='http://127.0.0.1:3000' + res.data.data[i].cover[j].url
+						res.data.data[i].cover[j].url =
+							'http://127.0.0.1:3000' +
+							res.data.data[i].cover[j].url
 					}
 				}
 			}
-			this.columnList[this.active].presentList = res.data.data
+			if (res.data.total < this.columnList[this.active].pageIndex) {
+				this.finished = true
+			}
+			this.columnList[this.active].presentList.push(...res.data.data)
 		},
 		async changeColumn() {
 			this.init()
+		},
+		//上拉刷新
+		onLoad() {
+			this.columnList[this.active].pageIndex++
+			this.init()
+			this.loading = false
 		}
 	}
 }

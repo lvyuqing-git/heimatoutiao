@@ -12,3 +12,10 @@ export const getAllArticle = (params)=>{
         params
     })
 }
+
+//获取文章详情
+export const getDetailInfo = (id)=>{
+    return axios({
+        url : `/post/${id}`
+    })
+}
