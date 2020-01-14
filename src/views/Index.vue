@@ -14,29 +14,35 @@
 			</div>
 		</div>
 		<div class="nav">
-			<van-tabs sticky swipeable @change="changeColumn" v-model="active">
+			<van-tabs sticky swipeable v-model="active">
 				<van-tab
 					:title="item.name"
 					v-for="item in columnList"
 					:key="item.id"
 				>
-					<van-list
-						v-model="loading"
-						:finished="finished"
-						finished-text="没有更多了"
-						@load="onLoad"
+					<van-pull-refresh
+						v-model="item.isLoading"
+						@refresh="onRefresh"
 					>
-						<hminformation
-							v-for="value in item.presentList"
-							:key="value.id"
-							:post="value"
-							@click="
-								$router.push({
-									path: `/articleDetails/${value.id}`
-								})
-							"
-						></hminformation>
-					</van-list>
+						<van-list
+							v-model="item.loading"
+							:finished="item.finished"
+							finished-text="没有更多了"
+							@load="onLoad"
+							:immediate-check="false"
+						>
+							<hminformation
+								v-for="value in item.presentList"
+								:key="value.id"
+								:post="value"
+								@click="
+									$router.push({
+										path: `/articleDetails/${value.id}`
+									})
+								"
+							></hminformation>
+						</van-list>
+					</van-pull-refresh>
 				</van-tab>
 			</van-tabs>
 		</div>
@@ -51,9 +57,7 @@ export default {
 	data() {
 		return {
 			columnList: [],
-			active: localStorage.getItem('user_token') ? 1 : 0,
-			loading: false,
-			finished: false
+			active: localStorage.getItem('user_token') ? 1 : 0
 		}
 	},
 	components: {
@@ -66,10 +70,17 @@ export default {
 				...value,
 				pageIndex: 1,
 				pageSize: 5,
-				presentList: []
+				presentList: [],
+				//上拉加载
+				loading: false,
+				finished: false,
+				//下拉刷新
+				isLoading: false
 			}
 		})
-		this.init()
+        this.init()
+        console.log(this.columnList[this.active].presentList);
+        
 	},
 	methods: {
 		async init() {
@@ -87,21 +98,33 @@ export default {
 					}
 				}
 			}
-			if (res.data.total < this.columnList[this.active].pageIndex) {
-				this.finished = true
-			}
 			this.columnList[this.active].presentList.push(...res.data.data)
+			if (res.data.total < this.columnList[this.active].pageIndex) {
+				this.columnList[this.active].finished = true
+			}
 		},
-		async changeColumn() {
-			this.init()
-		},
-		//上拉刷新
+		
+		//上拉加载
 		onLoad() {
 			this.columnList[this.active].pageIndex++
 			this.init()
-			this.loading = false
-		}
-	}
+			this.columnList[this.active].loading = false
+		},
+		//下拉刷新
+		onRefresh() {
+			console.log('下拉刷新')
+			this.columnList[this.active].presentList.length = 0
+			this.columnList[this.active].pageIndex = 1
+			this.init()
+			this.columnList[this.active].isLoading = false
+        },
+        
+    },
+    watch: {
+			active(){
+                this.init()
+            }
+        }
 }
 </script>
 
