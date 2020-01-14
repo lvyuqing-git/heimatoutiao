@@ -9,23 +9,28 @@
 				<van-icon name="search" />
 				<span>搜索商品</span>
 			</div>
-			<div
-				class="user"
-				@click="$router.push({ path: `/personal/${id}` })"
-			>
+			<div class="user" @click="$router.push({ path: `/personal` })">
 				<van-icon name="manager-o" />
 			</div>
 		</div>
 		<div class="nav">
-			<van-tabs sticky swipeable @change="changeColumn">
+			<van-tabs sticky swipeable @change="changeColumn" v-model="active">
 				<van-tab
 					:title="item.name"
 					v-for="item in columnList"
 					:key="item.id"
 				>
-                <hminformation v-for="value in item.presentList" :key="value.id" :post='value'></hminformation>
-
-                </van-tab>
+					<hminformation
+						v-for="value in item.presentList"
+						:key="value.id"
+						:post="value"
+						@click="
+							$router.push({
+								path: `/articleDetails/${value.id}`
+							})
+						"
+					></hminformation>
+				</van-tab>
 			</van-tabs>
 		</div>
 	</div>
@@ -34,15 +39,17 @@
 <script>
 import { category, getAllArticle } from '../apis/article'
 import hminformation from '../components/hminformation'
+
 export default {
 	data() {
 		return {
-			columnList: []
+			columnList: [],
+			active: localStorage.getItem('user_token') ? 1 : 0
 		}
-    },
-    components: {
-      hminformation  
-    },
+	},
+	components: {
+		hminformation
+	},
 	async mounted() {
 		let res = await category()
 		this.columnList = res.data.data.map(value => {
@@ -53,17 +60,26 @@ export default {
 				presentList: []
 			}
 		})
-		console.log(this.columnList)
+		this.init()
 	},
 	methods: {
-		async changeColumn(active) {
+		async init() {
 			let res = await getAllArticle({
-				pageIndex: this.columnList[active].pageIndex,
-				pageSize: this.columnList[active].pageSize,
-				category: this.columnList[active].id
+				pageIndex: this.columnList[this.active].pageIndex,
+				pageSize: this.columnList[this.active].pageSize,
+				category: this.columnList[this.active].id
 			})
-			this.columnList[active].presentList = res.data.data
-			console.log(this.columnList[active].presentList)
+			for (let i = 0; i < res.data.data.length; i++) {
+				for (let j = 0; j < res.data.data[i].cover.length; j++) {
+					if (res.data.data[i].cover[j].url.indexOf('http') == -1) {
+						res.data.data[i].cover[j].url='http://127.0.0.1:3000' + res.data.data[i].cover[j].url
+					}
+				}
+			}
+			this.columnList[this.active].presentList = res.data.data
+		},
+		async changeColumn() {
+			this.init()
 		}
 	}
 }

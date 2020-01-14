@@ -60,9 +60,9 @@ export default {
     },
     async mounted () {
         let res = await user_info(JSON.parse(localStorage.getItem('user')).id)
-     
+        console.log(res);
+        
         this.user = res.data.data
-           console.log(this.user);
         
     }
 }

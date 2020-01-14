@@ -4,6 +4,7 @@ import Login from '@/views/login.vue'
 import Personal from '@/views/personal.vue'
 import Edit_profile from '@/views/Edit_profile.vue'
 import Index from '@/views/Index'
+import ArticleDetails from '../views/ArticleDetails'
 Vue.use(VueRouter)
 let router = new VueRouter({
 	routes: [
@@ -11,7 +12,12 @@ let router = new VueRouter({
 			name: 'Index',
 			path: '/',
 			component: Index
-		},
+        },
+        {
+			name: 'ArticleDetails',
+			path: '/articleDetails/:id',
+			component: ArticleDetails
+        },
 		{
 			name: 'Login',
 			path: '/login',

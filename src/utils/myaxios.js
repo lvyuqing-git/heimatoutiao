@@ -4,7 +4,9 @@ axios.defaults.baseURL = 'http://127.0.0.1:3000'
 
 axios.interceptors.request.use(function (config) {
     // 在发送请求之前做些什么
-    config.headers.Authorization = localStorage.getItem('user_token')
+    if(localStorage.getItem('user_token')){
+        config.headers.Authorization = localStorage.getItem('user_token')
+    }
     
     return config;
   }, function (error) {
